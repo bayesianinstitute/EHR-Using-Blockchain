@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Register Page</title>
+  <link rel="icon" type="image/x-icon" href="assets/img/cardiogram.ico" />
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/login.css">
+
+  <!--<script src="/js/web3.min.js"></script>-->
+</head>
+<body>
+
+  <main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+    <div class="container">
+      <div class="card login-card">
+        <div class="row no-gutters">
+          <div class="col-md-5">
+            <img src="assets/images/log.jpg" alt="login" class="login-card-img">
+          </div>
+          <div class="col-md-7">
+            <div class="card-body">
+             <p class="login-card-description">Please enter your details to register.</p>
+             <div class="row">
+                        <div class="alert alert-warning col-sm-8 col-sm-offset-2" style="display: none;">
+                            <strong>Warning!</strong> Invalid public key. Please enter a valid public key to register.
+                        </div>
+                                    
+                        <div class="alert alert-info col-sm-8 col-sm-offset-2" style="display: none;">
+                            <strong>Info!</strong> User already registered. Please check your details.
+                        </div>
+                    </div>
+
+
+                  <form name="registerForm" class="form-horizontal" >
+                  <div class="form-group">
+                          <input type="text" class="form-control" id="name" placeholder="Enter name" name = "Name" required autofocus>
+                  </div>
+
+                  <div class="form-group">
+                        <input type="age" class="form-control" id="age" placeholder="Enter Mobile no" name = "Age" required>
+                      </div>
+                       <div class="form-group"> 
+                            
+                                <select class="form-control" id="designation" required>
+                                    <option selected disabled>-- Registering as --</option>
+                                    <option value="0">Patient</option>
+                                    <option value="1">Doctor</option>
+                                    <option value="2">Lab</option>
+                                </select>
+                          </div>
+                  
+                  
+                </form>
+                <div class="col-md-8">
+                    <button class="btn btn-block login-btn mb-4" onclick="addAgent()">Register</button>
+                
+                      </div>  
+                    
+
+                <p class="login-card-footer-text">Already have an account? <a href="./index.html" class="text-reset">Login here</a></p>
+              </div>
+          </div>
+        </div>
+      </div>
+      
+      </div> -->
+    </div>
+  </main>
+
+
+<script src="js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/app.js"></script>
+<script src="/js/web3.min.js"></script>
+<script src="https://unpkg.com/ipfs-api/dist/index.min.js" crossorigin="anonymous"></script>
+
+<script>
+
+    function addAgent(){
+        var ipfs = window.IpfsApi('localhost', '5001')
+
+        const Buffer = window.IpfsApi().Buffer;
+
+        name = $("#name").val();
+        number = $("#age").val();
+
+        designation = $("#designation").val();
+        designation = parseInt(designation);
+        
+        publicKey = web3.currentProvider.selectedAddress;
+        publicKey = publicKey.toLowerCase();
+        console.log("PK:"+publicKey);
+
+        var validPublicKey = true;
+        var validAgent = true;
+        var PatientList = 0;
+        var HealthcareList = 0;
+        
+
+        contractInstance.get_patient_list({gas: 1000000},function(error, result){
+            if(!error)
+                PatientList = result; 
+            else
+                console.error(error);
+            });
+
+        contractInstance.get_healthcare_list({gas: 1000000},function(error, result){
+            if(!error)
+                HealthcareList = result;
+            else
+                console.error(error);
+            });
+
+        
+
+        if (validPublicKey == false) {
+            $(".alert-warning").show();
+        }
+        else{
+            for(j = 0; j < PatientList.length; j++) {
+                 if (publicKey == PatientList[j] ){
+                     validAgent = false;
+                }
+            }
+            for(j = 0; j < HealthcareList.length; j++) {
+                 if (publicKey == HealthcareList[j] ){
+                     validAgent = false;
+                }
+            }
+            
+            console.log(validAgent);
+            if (validAgent == true) {
+                $(".alert-warning").hide()
+                $(".alert-info").hide();   
+                
+                var ipfshash = "";
+
+                if (designation == "0") {
+                    var reportTitle = 
+`Name: ${name}
+Public Key: ${publicKey}
+                            
+`;
+                    var buffer = Buffer(reportTitle);
+                    
+                    ipfs.files.add(buffer, (error, result) => {
+                        if(error){
+                            console.log(error);
+                        }else{
+                            console.log("result:"+result);
+                            ipfshash = result[0].hash;
+                            console.log("Ipfs hash:"+ipfshash);
+                            contractInstance.add_agent(name, number, designation, ipfshash, {gas: 1000000}, (err, res) => {
+                                if(!err){
+                                    location.replace("./patient.html?key="+publicKey);
+                                }else{
+                                    console.log(err);
+                                }
+                                
+                            })
+                        }
+                    })
+                }else{
+                    contractInstance.add_agent(name, number, designation, ipfshash, {gas: 1000000}, (err, res) => {
+                    if (!err) {
+                        if (designation == "1") {
+                            location.replace("./doctor.html?key="+publicKey);
+                        }
+                        else if (designation == "2"){
+                            location.replace("./Mediclab.html?key="+publicKey);
+                        }
+                        
+                    } else
+                        console.log(err);
+                    });
+                }              
+            }
+            else {
+                $(".alert-info").show();
+            } 
+
+        }
+
+        return false;
+    }
+</script>
+
+
+</body>
+</html>

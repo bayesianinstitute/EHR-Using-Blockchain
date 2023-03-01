@@ -1,0 +1,23 @@
+{
+  "name": "agent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "lite-server",
+    "start": "lite-server"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ipfs-http-client": "^60.0.0",
+    "require": "^2.4.20",
+    "solc": "^0.4.24",
+    "web3": "^0.20.7"
+  },
+  "devDependencies": {
+    "lite-server": "^2.3.0"
+  }
+}

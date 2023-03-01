@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>MediShield</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/img/cardiogram.ico" />
+        <!-- Bootstrap Icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
+        <!-- SimpleLightbox plugin CSS-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#page-top">MediShield</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="./index.html">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="./register.html">Register</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 h-100">
+                <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
+                    <div class="col-lg-8 align-self-end">
+                       <!-- <h1 style="color:#f4623a;" class="font-weight-bold">Welcome to MediShield</h1> -->
+                       <h1 style="color:#fff0ff;" class="font-weight-bold">Welcome to MediShield</h1>
+                        <hr class="divider" />
+                    </div>
+                    <div class="col-lg-8 align-self-baseline">
+
+                        <form class="form-horizontal" name="loginForm">
+                    <div class="panel-heading"><h5 class="text-center">Login is Linked to your Metamask Account</h5></div>
+                    <div class="form-group">
+                    </div>
+                </form>
+                <div class="text-center">
+                    <button class="btn btn-primary btn-xl" onclick="login()">Login</button>
+                    
+                </div>
+                
+
+                <div class="row">
+                    <div class="col-sm-80">
+
+                    <div class="alert alert-warning col-sm-50 col-sm-offset-2" style="display: none;">
+                        <strong>Warning!</strong> Unregistered user. Click <a href="./register.html">here</a> to register. 
+                
+                   </div>
+                </div>
+            </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+         <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/web3.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        $(function(){
+      $("#includedContent").load("anim.html"); 
+    });
+
+        connect();    
+        function login(){
+            $(".alert-warning").hide();
+
+            publicKey= web3.currentProvider.selectedAddress;
+            console.log(publicKey);
+            contractInstance.get_patient_list(function(error, result){
+                if(!error){
+                    var PatientList = result;
+                    for(var i = 0; i < PatientList.length; i++) {
+                        if (publicKey.toLowerCase() == PatientList[i]) {
+                            location.href = "./patient.html?key=" + publicKey;
+                        }
+                    }
+                    
+                } else {
+                    console.log(error);
+                    console.log("Invalid User!");
+                    $(".alert-warning").show();
+                }
+            });
+
+            contractInstance.get_healthcare.call(publicKey, {gas: 1000000},function(error, result){
+            if(!error){
+                var a = result[0]; 
+                var designation = result[2];
+                if (designation == "1") {
+                    location.href = "./doctor.html?key=" + publicKey;
+                }
+                else if (designation == "2"){
+                    location.href = "./Mediclab.html?key=" + publicKey;
+                }
+            }
+                
+            else
+                console.error(error);
+        });
+            
+            console.log("Invalid User!");
+            $(".alert-warning").show();
+        }
+
+     
+        
+    </script>
+       
+</html>
