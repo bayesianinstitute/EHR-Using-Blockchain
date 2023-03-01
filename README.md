@@ -3,12 +3,6 @@
 
 
 
-## Demo Video:
-
-
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/UJet5UYUOfY/0.jpg)](https://www.youtube.com/watch?v=UJet5UYUOfY)
-
-
 # Blockchain-For-EHR-Management-Medishield
 A decentralized system for managing electronic health records using blockchain and IPFS.
 
