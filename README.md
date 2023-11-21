@@ -93,16 +93,8 @@ The projects requires NodeJS and npm to work. Instructions to install all other 
 - Make sure to configure it the way mentioned above.
 
 1. Open new Terminal and deploy contracts using `truffle migrate`
-2. Copy deployed contract address to src/app.js
-   ![alt text](https://raw.githubusercontent.com/game-of-codes/HealthCare-Blockchain/master/images/ganace-contracct.png)
+2. If you change contents of any contract , replace existing deployment using `truffle migrate --reset`
 
-```js
-// app/src/app.js  line number 11
-var agentContractAddress = "0x75E115394aacC7c6063E593B9292CB9417E4cbeC";
-```
-
-3. If you change contents of any contract , replace existing deployment using `truffle migrate --reset`
-   > Note : reset of the contract will change the contract Address which needs to be updated in src/app.js
 
 ### Running the dApp
 
